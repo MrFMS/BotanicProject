@@ -10,9 +10,10 @@ GameObject:
   m_Component:
   - component: {fileID: 528366066419450492}
   - component: {fileID: 528366066419450495}
+  - component: {fileID: -6731044218874672309}
   m_Layer: 0
   m_Name: Branche
-  m_TagString: Untagged
+  m_TagString: Tree
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -43,9 +44,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b5dbd6304ec82d146a0851c510f432eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  material: {fileID: 2100000, guid: 7603f80234ea07245a2c5f9b482d66f3, type: 2}
+  material: {fileID: 2100000, guid: c6c6c6d19936d054e99e3b57d1ad2aa9, type: 2}
   radiusUp: 1
   radiusBottom: 2
   height: 2
   nbMeridians: 20
   nbParallels: 20
+  tree: {fileID: 0}
+--- !u!64 &-6731044218874672309
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 528366066419450494}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 0}

@@ -1,4 +1,4 @@
-﻿using System;
+﻿
 using System.Text;
 using System.Collections;
 using System.Collections.Generic;
@@ -14,59 +14,100 @@ public class Tree : MonoBehaviour
 {
 
     private const string axiom = "X";
-    private string currentString;
+    private string currentString = axiom;
+    StringBuilder sb = new StringBuilder();
     public int iterations = 5;
     public float length = 2f;
     public float angle = 30f;
+    List<Dictionary<char, string>> rules = new List<Dictionary<char, string>>();
     private Stack<StackTransform> transformStack = new Stack<StackTransform>();
 
+    public StateTree state = StateTree.GREEN;
+    public Material[] materials;
+    public Material CurrentMaterial;
+    public List<GameObject> Branches = new List<GameObject>();
     public GameObject BranchPrefab;
 
+    public float saveRadius;
 
-    private Dictionary<char, string> rules;
+
+    private Dictionary<char, string> rule;
+
+   // private Dictionary<char, string> rules;
 
 
     // Start is called before the first frame update
     void Start()
     {
-
-        rules = new Dictionary<char, string>
+        CurrentMaterial = materials[0];
+        rules.Add(new Dictionary<char, string>
         {
             // "F[+F][-F]"
             { 'X', "[F[-X+F[+FX]][*-X+F[+FX]][/-X+F[+FX]-X]]" },
             { 'F', "FF" }
-        };
+        });
 
+        rules.Add(new Dictionary<char, string>
+        {
+            { 'X', "[F-[X+X]+F[+FX]-X]" },
+            { 'F', "FF" }
+        });
+
+
+        rules.Add(new Dictionary<char, string>
+        {
+            { 'X', "[-FX][+FX][FX]" },
+            { 'F', "FF" }
+        });
+
+        rules.Add(new Dictionary<char, string>
+        {
+            { 'X', "[-FX]X[+FX][+F-FX]" },
+            { 'F', "FF" }
+        });
+
+        rule = rules[Random.Range(0, rules.Count - 1)];
+        GenerateOneIteration();
+  
+    }
+
+    public void GenerateOneIteration()
+    {
+        foreach (char c in currentString)
+        {
+            sb.Append(rule.ContainsKey(c) ? rule[c] : c.ToString());
+        }
+        currentString = sb.ToString();
+        Debug.Log(currentString);
+        sb = new StringBuilder();
         Generate();
+        StopCoroutine("ThirstyTree");
+        StartCoroutine("ThirstyTree");
     }
 
     void Generate()
     {
-
-        currentString =axiom;
-        StringBuilder sb = new StringBuilder();
-
-        for (int i = 0; i < iterations; i++)
-        {
-            foreach (char c in currentString)
-            {
-                sb.Append(rules.ContainsKey(c) ? rules[c] : c.ToString());
-            }
-
-            currentString = sb.ToString();
-            sb = new StringBuilder();
-        }
         foreach (var c in currentString)
         {
             switch (c)
             {
                 case 'F':
-
                     GameObject branch = Instantiate(BranchPrefab);
-
-                   // branch.GetComponent<Branch>().GenerateBranch();
+                    branch.GetComponent<Branch>().material = CurrentMaterial;
+                    branch.GetComponent<Branch>().GenerateBranch(2f);
+                    /* if (Branches.Count == 0)
+                     {
+                         branch.GetComponent<Branch>().GenerateBranch(2f);
+                     }
+                     else
+                     {
+                         branch.GetComponent<Branch>().GenerateBranch(saveRadius);
+                     }*/
+                    saveRadius = branch.GetComponent<Branch>().radiusUp;
                     branch.transform.SetPositionAndRotation(transform.position, transform.rotation); //GetComponent<LineRenderer>().SetPosition(0, transform.position);
                     transform.Translate(Vector3.up);
+                    branch.GetComponent<Branch>().tree = this;
+                    Branches.Add(branch);
                    // branch.GetComponent<LineRenderer>().SetPosition(1, transform.position);
                     break;
                 case 'X':
@@ -97,12 +138,57 @@ public class Tree : MonoBehaviour
                     transform.Rotate(Vector3.down * 120);
                     break;
                 default:
-                    throw new InvalidOperationException("Invalid L-tree operation");
                     break;
             }
         }
     }
 
+    IEnumerator ThirstyTree()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(30f);
+            switch (state)
+            {
+                case StateTree.GREEN:
+                    state = StateTree.ORANGE;
+                    ChangeMaterial(materials[1]);
+                    break;
+                case StateTree.ORANGE:
+                    state = StateTree.BROWN;
+                   ChangeMaterial(materials[2]);
+                    break;
+                case StateTree.BROWN:
+                    state = StateTree.BLACK;
+                    ChangeMaterial(materials[3]);
+                    break;
+                case StateTree.BLACK:
+                    TreeController.Instance.DestroyTree(gameObject);
+                    break;
+                default:
+                    state = StateTree.GREEN;
+                    break;
+            }
+            yield return null;
+        }
+    }
 
+
+    private void OnDestroy()
+    {
+        foreach (var branch in Branches)
+        {
+            Destroy(branch);
+        }
+    }
+
+    void ChangeMaterial(Material  material)
+    {
+        CurrentMaterial = material;
+        foreach (var branch in Branches)
+        {
+            branch.GetComponent<Branch>().material = material;
+        }
+    }
 
 }

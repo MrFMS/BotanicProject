@@ -17,10 +17,11 @@ public class Branch : MonoBehaviour
 	private int nbTriangles;
 	private int nbVertices;
 
+	public Tree tree;
+
 
 	void Start()
 	{
-	
 	}
 
 	public void GenerateBranch(float radBottom)
@@ -85,5 +86,6 @@ public class Branch : MonoBehaviour
 		// Remplissage du Mesh et ajout du material
 		gameObject.GetComponent<MeshFilter>().mesh = mesh;
 		gameObject.GetComponent<MeshRenderer>().material = material;
+		gameObject.GetComponent<MeshCollider>().sharedMesh = mesh;
 	}
 }
