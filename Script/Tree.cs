@@ -56,13 +56,15 @@ public class Tree : MonoBehaviour
             currentString = sb.ToString();
             sb = new StringBuilder();
         }
-
         foreach (var c in currentString)
         {
             switch (c)
             {
                 case 'F':
+
                     GameObject branch = Instantiate(BranchPrefab);
+
+                   // branch.GetComponent<Branch>().GenerateBranch();
                     branch.transform.SetPositionAndRotation(transform.position, transform.rotation); //GetComponent<LineRenderer>().SetPosition(0, transform.position);
                     transform.Translate(Vector3.up);
                    // branch.GetComponent<LineRenderer>().SetPosition(1, transform.position);
