@@ -11,17 +11,19 @@ public class Branch : MonoBehaviour
 	public float height;
 	public int nbMeridians;
 	public int nbParallels;
+	public Tree tree;
 
 	private Vector3[] vertices;
 	private int[] triangles;
 	private int nbTriangles;
 	private int nbVertices;
 
-	public Tree tree;
+
 
 
 	void Start()
 	{
+		
 	}
 
 	public void GenerateBranch(float radBottom)

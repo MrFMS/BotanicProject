@@ -26,7 +26,9 @@ public class Tree : MonoBehaviour
     public Material[] materials;
     public Material CurrentMaterial;
     public List<GameObject> Branches = new List<GameObject>();
+    public List<GameObject> Leaves = new List<GameObject>();
     public GameObject BranchPrefab;
+    public GameObject Leaf;
 
     public float saveRadius;
 
@@ -49,20 +51,20 @@ public class Tree : MonoBehaviour
 
         rules.Add(new Dictionary<char, string>
         {
-            { 'X', "[F-[X+X]+F[+FX]-X]" },
+            { 'X', "[F-[*X+X]+F[/+FX]-X]" },
             { 'F', "FF" }
         });
 
 
         rules.Add(new Dictionary<char, string>
         {
-            { 'X', "[-FX][+FX][FX]" },
+            { 'X', "[-FX][/+FX][*FX]" },
             { 'F', "FF" }
         });
 
         rules.Add(new Dictionary<char, string>
         {
-            { 'X', "[-FX]X[+FX][+F-FX]" },
+            { 'X', "[-FX]X[/+FX][*+F-FX]" },
             { 'F', "FF" }
         });
 
@@ -78,7 +80,6 @@ public class Tree : MonoBehaviour
             sb.Append(rule.ContainsKey(c) ? rule[c] : c.ToString());
         }
         currentString = sb.ToString();
-        Debug.Log(currentString);
         sb = new StringBuilder();
         Generate();
         StopCoroutine("ThirstyTree");
@@ -93,8 +94,10 @@ public class Tree : MonoBehaviour
             {
                 case 'F':
                     GameObject branch = Instantiate(BranchPrefab);
-                    branch.GetComponent<Branch>().material = CurrentMaterial;
-                    branch.GetComponent<Branch>().GenerateBranch(2f);
+                    branch.GetComponent<MeshRenderer>().material = CurrentMaterial;
+
+                    //branch.GetComponent<Branch>().material = CurrentMaterial;
+                    // branch.GetComponent<Branch>().GenerateBranch(2f);
                     /* if (Branches.Count == 0)
                      {
                          branch.GetComponent<Branch>().GenerateBranch(2f);
@@ -103,10 +106,11 @@ public class Tree : MonoBehaviour
                      {
                          branch.GetComponent<Branch>().GenerateBranch(saveRadius);
                      }*/
-                    saveRadius = branch.GetComponent<Branch>().radiusUp;
+                    // saveRadius = branch.GetComponent<Branch>().radiusUp;
                     branch.transform.SetPositionAndRotation(transform.position, transform.rotation); //GetComponent<LineRenderer>().SetPosition(0, transform.position);
                     transform.Translate(Vector3.up);
-                    branch.GetComponent<Branch>().tree = this;
+                    branch.GetComponent<BrancheCylindre>().tree = this;
+                    //branch.GetComponent<Branch>().tree = this;
                     Branches.Add(branch);
                    // branch.GetComponent<LineRenderer>().SetPosition(1, transform.position);
                     break;
@@ -127,6 +131,9 @@ public class Tree : MonoBehaviour
                     break;
                 case ']':
                     StackTransform ti = transformStack.Pop();
+                    GameObject leaf = Instantiate(Leaf, transform.position, transform.rotation);
+                    leaf.GetComponent<Leaf>().tree = this;
+                    Leaves.Add(leaf);
                     transform.position = ti.position;
                     transform.rotation = ti.rotation;
                     break;
@@ -180,6 +187,10 @@ public class Tree : MonoBehaviour
         {
             Destroy(branch);
         }
+        foreach (var leaf in Leaves)
+        {
+            Destroy(leaf);
+        }
     }
 
     void ChangeMaterial(Material  material)
@@ -187,7 +198,8 @@ public class Tree : MonoBehaviour
         CurrentMaterial = material;
         foreach (var branch in Branches)
         {
-            branch.GetComponent<Branch>().material = material;
+            branch.GetComponent<MeshRenderer>().material = CurrentMaterial;
+            //branch.GetComponent<Branch>().material = material;
         }
     }
 

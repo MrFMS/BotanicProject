@@ -54,5 +54,6 @@ MonoBehaviour:
   - {fileID: 2100000, guid: af5b4a3013e6ee240aa82bca56f29a43, type: 2}
   CurrentMaterial: {fileID: 0}
   Branches: []
-  BranchPrefab: {fileID: 528366066419450494, guid: d41f71e87023960459f7f6a5e2d33ef5, type: 3}
+  BranchPrefab: {fileID: 9041711036221929633, guid: 04e085028b815eb4b9deb32bfc93c2dc, type: 3}
+  Leaf: {fileID: 1287425197057376756, guid: 776aad5f16d301c46b38d73b7efbad05, type: 3}
   saveRadius: 0

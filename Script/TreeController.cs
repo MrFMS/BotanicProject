@@ -35,7 +35,15 @@ public class TreeController : MonoSingleton<TreeController>
     public void GrowingUp(GameObject Tree)
     {
         Debug.Log("laaa");
-        Tree.GetComponent<Branch>().tree.GenerateOneIteration();
+        if (Tree.CompareTag("Leaf"))
+        {
+            Tree.GetComponent<Leaf>().tree.GenerateOneIteration();
+        } else
+        {
+            Tree.GetComponent<BrancheCylindre>().tree.GenerateOneIteration();
+        }
+
+        //Tree.GetComponent<Branch>().tree.GenerateOneIteration();
     }
 
 

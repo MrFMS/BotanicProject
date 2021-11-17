@@ -72,7 +72,7 @@ public class InputManager : MonoSingleton<InputManager>
                 if (state == State.WATER)
                 {
                     Debug.Log("je passe la");
-                    if (hit.collider.gameObject.CompareTag("Tree"))
+                    if (hit.collider.gameObject.CompareTag("Tree") || hit.collider.gameObject.CompareTag("Leaf"))
                     {
                         Debug.Log("hrtr");
                         TreeController.Instance.GrowingUp(hit.collider.gameObject);
